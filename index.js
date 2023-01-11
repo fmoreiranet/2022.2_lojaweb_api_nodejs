@@ -25,5 +25,5 @@ mongoose.connect(DB_URI)
         app.listen(3000);
     })
     .catch(err => {
-        console.error("Error: ");
+        console.error("Error: ", err.message);
     });
