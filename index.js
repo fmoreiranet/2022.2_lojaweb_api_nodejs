@@ -1,4 +1,5 @@
 // Inicio do codigo
+const dotenv = require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 
@@ -14,14 +15,19 @@ app.get("/", function (req, res) {
     res.status(200).json({ message: "Bem vindo!" });
 });
 
+const userRouter = require("./routes/userRouter");
+
+app.use(userRouter);
+
 //Banco de Dados
-const DB_USER = "adminMongo";
-const DB_PASS = encodeURIComponent("PmzI87gjrt4bBjCj");
+const DB_USER = process.env.DB_USER;
+const DB_PASS = encodeURIComponent(process.env.DB_PASS);
 const DB_URI = `mongodb+srv://${DB_USER}:${DB_PASS}@cluster-lojaweb.jcqtjqp.mongodb.net/?retryWrites=true&w=majority`;
 
+mongoose.set('strictQuery', false);
 mongoose.connect(DB_URI)
     .then(result => {
-        console.log("Conectado!", result);
+        console.log("Conectado!");
         app.listen(3000);
     })
     .catch(err => {
