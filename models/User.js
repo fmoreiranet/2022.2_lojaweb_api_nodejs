@@ -4,7 +4,10 @@ const User = mongoose.model("User", {
     nome: String,
     foto: String,
     cpf: String,
-    email: String,
+    email: {
+        type: String,
+        unique: true,
+    },
     senha: String,
     telefone: String,
     data_nasc: String,
