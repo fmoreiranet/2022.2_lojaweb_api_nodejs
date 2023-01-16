@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const auth = require('../services/auth');
 const User = require('../models/User');
 
 router.post("/usuario/add", async function (req, res) {
@@ -9,7 +10,7 @@ router.post("/usuario/add", async function (req, res) {
         validUser(user);
         // Verifica se usuário já existe
         await verifyUserExist(user.email);
-
+        user.senha = await auth.createNewPass(user.senha);
         await User.create(user);
         res.status(200).json({ message: "Cadastrado!" });
     } catch (error) {
@@ -80,6 +81,26 @@ router.delete("/usuario/:id", async function (req, res) {
 });
 
 
+router.post("/usuario/login", async function (req, res, next) {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(401).json({ error: "Usuário sem acesso!" });
+        }
+
+        const user = await User.findOne({ email: email, ative: true });
+        if (!user) {
+            return res.status(401).json({ error: "Usuário sem acesso!" });
+        }
+        await auth.comparePasswords(password, user.senha);
+        const token = auth.createToken(user);
+        return res.status(200).json({ message: "Usuário logado!", token: token });
+    } catch (error) {
+        console.error("Error:", error.message);
+        return res.status(500).json({ error: "Error ao entrar!" });
+    }
+});
 
 function monteUser(req) {
     const {
@@ -133,8 +154,8 @@ function validUser(user, update = false) {
 }
 
 async function verifyUserExist(email) {
-    let user = await User.find({ email: email });
-    if (user.length != 0) {
+    let user = await User.exists({ email: email });
+    if (user) {
         throw new Error('Error ao cadastrar ou usuário já cadastrado!');
     }
 }
