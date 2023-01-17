@@ -3,7 +3,7 @@ const dotenv = require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 
-const auth = require('../services/auth');
+const auth = require('./services/auth');
 
 const app = express();
 
@@ -17,7 +17,7 @@ app.get("/", auth.checkToken, function (req, res) {
     res.status(200).json({ message: "Bem vindo!" });
 });
 
-const userRouter = require("../routes/userRouter");
+const userRouter = require("./routes/userRouter");
 
 app.use(userRouter);
 
