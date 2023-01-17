@@ -4,11 +4,22 @@ const User = mongoose.model("User", {
     nome: String,
     foto: String,
     cpf: String,
-    email: String,
+    email: {
+        type: String,
+        unique: true,
+        required: true,
+    },
     senha: String,
     telefone: String,
     data_nasc: String,
-    ative: Boolean
+    perfil: {
+        type: Number,
+        default: 1 //roles: 0 = admin && 1 = cliente 
+    },
+    ative: {
+        type: Boolean,
+        default: true
+    }
 });
 
 module.exports = User;
