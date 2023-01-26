@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const auth = require('../services/auth');
 const User = require('../models/User');
+let multer = require('multer');
 
 router.post("/usuario/add", async function (req, res) {
     try {
@@ -102,6 +103,19 @@ router.post("/usuario/login", async function (req, res, next) {
     }
 });
 
+
+let upload = multer({ dest: './uploads/' });
+router.post('/upload', upload.array('file'), async (req, res) => {
+    try {
+        let dataSend = { upload: true, files: req.files };
+        res.send(dataSend);
+        return res.status(200).json({ message: dataSend.files });
+    } catch (error) {
+        return res.status(500).json({ error: "Erro ao enviar os arquivos!" });
+    }
+});
+
+// Functions 
 function monteUser(req) {
     const {
         nome,
