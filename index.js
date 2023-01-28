@@ -21,8 +21,10 @@ app.get("/", auth.checkToken, function (req, res) {
 });
 
 const userRouter = require("./routes/userRouter");
+const addressRouter = require("./routes/addressRouter");
 
 app.use(userRouter);
+app.use(addressRouter);
 
 //Banco de Dados
 // const DB_USER = process.env.DB_USER;
