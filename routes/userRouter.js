@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const auth = require('../services/auth');
 const User = require('../models/User');
-let multer = require('multer');
+const multer = require('multer');
 
 router.post("/usuario/add", async function (req, res) {
     try {
@@ -104,12 +104,18 @@ router.post("/usuario/login", async function (req, res, next) {
 });
 
 
-let upload = multer({ dest: './uploads/' });
-router.post('/upload', upload.array('file'), async (req, res) => {
+let upload = multer({ dest: './uploads/users' });
+router.post('/usuario/upload', upload.array('file'), async function (req, res) {
     try {
-        let dataSend = { upload: true, files: req.files };
-        res.send(dataSend);
-        return res.status(200).json({ message: dataSend.files });
+        //const userAuth = await auth.checkToken(req, res);
+        const userID = req.body.user;
+        const filename = req.files[0].filename.toString();
+        const userUpdate = await User.updateOne({ _id: userID }, { foto: filename });
+        if (filename && userUpdate.matchedCount > 0) {
+            let dataSend = { upload: true, files: req.files };
+            return res.status(200).json(dataSend);
+        }
+        return res.status(500).json({ error: "Erro ao enviar os arquivos!" });
     } catch (error) {
         return res.status(500).json({ error: "Erro ao enviar os arquivos!" });
     }
