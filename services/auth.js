@@ -45,7 +45,8 @@ const auth = {
         } catch (error) {
             return res.status(401).json({ error: "Usuário sem acesso!" });
         }
-    }
+    },
+
 };
 
 module.exports = auth; 
