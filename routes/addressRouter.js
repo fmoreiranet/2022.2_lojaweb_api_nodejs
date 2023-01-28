@@ -5,7 +5,7 @@ const Address = require('../models/Address');
 router.post("/address/add", async function (req, res) {
     try {
 
-        const address = monteaddress(req);
+        const address = monteAddress(req);
         validAddress(address);
         await verifyAddressExist(address.cep, address.id_user);
         await Address.create(address);
@@ -17,8 +17,8 @@ router.post("/address/add", async function (req, res) {
 
 router.get("/address/list/:id", async function (req, res) {
     try {
-        let idAddress = req.params.id;
-        let address = await address.find({ id_user: idAddress });
+        let idUser = req.params.id;
+        let address = await Address.find({ id_user: idUser });
         res.status(200).json(address);
     } catch (error) {
         res.status(500).json({ error: "Erro ao cadastrar!" });
@@ -28,7 +28,7 @@ router.get("/address/list/:id", async function (req, res) {
 router.get("/address/:id", async function (req, res) {
     try {
         let idAddress = req.params.id;
-        let address = await address.findOne({ _id: idAddress });
+        let address = await Address.findOne({ _id: idAddress });
         res.status(200).json(address);
     } catch (error) {
         res.status(500).json({ error: "Erro ao buscar!" });
@@ -84,28 +84,31 @@ function monteAddress(req) {
         cep,
         logradouro,
         bairro,
-        cidade,
+        localidade,
         uf,
         numero,
         complemento,
         id_user,
+        padrao
+
     } = req.body;
 
     const address = {
         cep,
         logradouro,
         bairro,
-        cidade,
+        localidade,
         uf,
         numero,
         complemento,
         id_user,
+        padrao
     };
 
     return address;
 }
 
-function validaddress(address, update = false) {
+function validAddress(address, update = false) {
     let error = 0;
 
     if (!update)
@@ -133,7 +136,7 @@ function validaddress(address, update = false) {
 }
 
 async function verifyAddressExist(cep, idUser) {
-    let address = await address.exists({ cep: cep, id_user: idUser });
+    let address = await Address.exists({ cep: cep, id_user: idUser });
     if (address) {
         throw new Error('Error ao cadastrar ou usuário já cadastrado!');
     }
