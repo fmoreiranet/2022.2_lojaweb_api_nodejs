@@ -116,9 +116,9 @@ router.post('/usuario/upload', upload.array('file'), async function (req, res) {
             files.push("data:" + file.mimetype + ";base64," + file.buffer.toString('base64'));
         };
         let fileSave = JSON.stringify(files);
-        const userUpdate = await User.updateOne({ _id: userID }, { foto: fileSave });
+        const userUpdate = await User.updateOne({ _id: userID }, { foto: fileSave[0] });
         if (req.files && userUpdate.matchedCount > 0) {
-            let dataSend = { upload: true, files: fileSave };
+            let dataSend = { upload: true, files: fileSave[0] };
             return res.status(200).json(dataSend);
         }
         return res.status(500).json({ error: "Erro ao enviar os arquivos!" });
