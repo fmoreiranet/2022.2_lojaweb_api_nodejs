@@ -20,6 +20,7 @@ app.get("/", auth.checkToken, function (req, res) {
     res.status(200).json({ message: "Bem vindo!" });
 });
 
+app.use(express.static('./public'));
 const userRouter = require("./routes/userRouter");
 const addressRouter = require("./routes/addressRouter");
 
