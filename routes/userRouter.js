@@ -138,7 +138,7 @@ router.post('/usuario/upload', upload.array('file'), async function (req, res) {
         const userID = req.body.user;
         const file = req.files[0];
         const userUpdate = await User.updateOne({ _id: userID }, { foto: file.filename });
-        if (filename && userUpdate.matchedCount > 0) {
+        if (req.files && userUpdate.matchedCount > 0) {
             let dataSend = { upload: true, files: file.path };
             return res.status(200).json(dataSend);
         }
