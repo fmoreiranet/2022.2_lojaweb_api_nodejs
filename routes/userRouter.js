@@ -2,6 +2,8 @@ const router = require('express').Router();
 const auth = require('../services/auth');
 const User = require('../models/User');
 const multer = require('multer');
+const path = require('path');
+
 
 router.post("/usuario/add", async function (req, res) {
     try {
@@ -81,7 +83,6 @@ router.delete("/usuario/:id", async function (req, res) {
     }
 });
 
-
 router.post("/usuario/login", async function (req, res, next) {
     try {
         const { email, password } = req.body;
@@ -104,22 +105,49 @@ router.post("/usuario/login", async function (req, res, next) {
 });
 
 
-let upload = multer({ dest: './uploads/users' });
+// let upload = multer({ dest: './uploads/users' });
+// router.post('/usuario/upload', upload.array('file'), async function (req, res) {
+//     try {
+//         //const userAuth = await auth.checkToken(req, res);
+//         const userID = req.body.user;
+//         const filename = req.files[0].filename.toString();
+//         const userUpdate = await User.updateOne({ _id: userID }, { foto: filename });
+//         if (filename && userUpdate.matchedCount > 0) {
+//             let dataSend = { upload: true, files: req.files };
+//             return res.status(200).json(dataSend);
+//         }
+//         return res.status(500).json({ error: "Erro ao enviar os arquivos!" });
+//     } catch (error) {
+//         return res.status(500).json({ error: "Erro ao enviar os arquivos!" });
+//     }
+// });
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/images/')
+    }, filename: (req, file, cb) => {
+        console.log(file);
+        cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+    }
+});
+
+const upload = multer({ storage })
 router.post('/usuario/upload', upload.array('file'), async function (req, res) {
     try {
         //const userAuth = await auth.checkToken(req, res);
         const userID = req.body.user;
-        const filename = req.files[0].filename.toString();
-        const userUpdate = await User.updateOne({ _id: userID }, { foto: filename });
+        const file = req.files[0];
+        const userUpdate = await User.updateOne({ _id: userID }, { foto: file.filename });
         if (filename && userUpdate.matchedCount > 0) {
-            let dataSend = { upload: true, files: req.files };
+            let dataSend = { upload: true, files: file.path };
             return res.status(200).json(dataSend);
         }
         return res.status(500).json({ error: "Erro ao enviar os arquivos!" });
     } catch (error) {
         return res.status(500).json({ error: "Erro ao enviar os arquivos!" });
     }
-});
+})
+
 
 // Functions 
 function monteUser(req) {
