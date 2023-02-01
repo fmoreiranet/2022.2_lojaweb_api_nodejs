@@ -36,7 +36,7 @@ mongoose.set('strictQuery', false);
 mongoose.connect(process.env.URI)
     .then(result => {
         console.log("Conectado!");
-        app.listen(process.env.PORT);
+        app.listen(process.env.PORT || 3000);
     })
     .catch(err => {
         console.error("Error: ", err.message);

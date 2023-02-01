@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const User = mongoose.model("User", {
     nome: String,
-    foto: String,
+    foto: [String],
     cpf: String,
     email: {
         type: String,
